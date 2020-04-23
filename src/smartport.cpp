@@ -3,8 +3,15 @@
 
 namespace smartport {
 
-void SmartPort::SendData(uint16_t type, uint32_t data) {
+void SmartPort::SendData(uint16_t type, uint8_t data[4]) {
+    crc = 0;
+    SendU8(DATA_FRAME_HEADER);
+    SendU16(type);
     
+    for (int i = 0; i < 4; i++) {
+        SendU8(data[i]);
+    }
+    SendU8(~crc);
 }
 
 /**
