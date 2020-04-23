@@ -13,7 +13,7 @@ void SmartPort::SendData(uint16_t type, uint32_t data) {
  * 
  * @param byte The raw data byte.
  */
-void SmartPort::SendByte(uint8_t byte) {
+void SmartPort::SendU8(uint8_t byte) {
     UpdateCrc(byte);
 
     if (byte == STUFFING || byte == SEPARATOR) {
@@ -21,6 +21,11 @@ void SmartPort::SendByte(uint8_t byte) {
         byte ^= 0x60;
     }
     stream.write(byte);
+}
+
+void SmartPort::SendU16(uint16_t u16) {
+    SendU8(u16);
+    SendU8(u16 >> 8);
 }
 
 void SmartPort::UpdateCrc(uint8_t byte) {
