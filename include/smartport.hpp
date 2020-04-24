@@ -35,13 +35,14 @@ enum DataID {
     params = 0x5007,
 
     // Application-defined IDs from here
-    /**
-     * Corresponds to variable 0. Variable IDs 0-255 can be ORed with this to
-     * calculate the data ID for the corresponding variable.
-     * @see var_max
-     */
-    var_0 = 0x5100,
-    var_max = 0x51ff
+    var_signature = 0x5100,
+
+    // Data types
+    var_int = 0,
+    var_fixed = 1u << 12,
+    var_float,
+    var_varint,
+    var_string
 };
 
 // TODO: in 32 bits, stuff as much data into the packet as possible
