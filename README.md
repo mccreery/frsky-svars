@@ -7,3 +7,10 @@ will be written using streams. The idea behind this is that you can scope your
 program however you like, e.g. print to stdout and pipe into a serial port.
 
 Until the library is written all further implementation details are undecided.
+
+## Build
+```
+mkdir build && cd build && cmake .. && make
+# Install
+make install
+```
