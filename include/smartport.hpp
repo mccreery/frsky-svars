@@ -63,28 +63,42 @@ class SmartPort {
 public:
     SmartPort(std::ostream& stream);
 
-    /**
-     * Sends a single packet to the stream.
-     * @param frame_header Header identifying the type of packet.
-     * @see FrameHeader
-     */
-    void send(FrameHeader frame_header, uint16_t data_id, uint32_t data);
-
-    void send(uint16_t type, uint32_t data);
+    void passthrough(int channel, int32_t data);
+    void passthrough(int channel, FixedPoint data);
+    void passthrough(int channel, float data);
+    void passthrough(int channel, std::string data);
 private:
+    std::ostream& stream;
+    uint8_t crc;
+
     /**
-     * Sends one byte and
+     * Writes a byte to the output stream and updates the CRC.
      */
-    void send(uint8_t x);
-    void send(uint16_t x);
+    void write(uint8_t raw) {
+        update_crc(raw);
+        stream.put(raw);
+    }
+
+    /**
+     * Writes a short (16 bit) to the output stream and updates the CRC.
+     */
+    void write(uint16_t raw) {
+        // TODO check if big or little endian
+        write((uint8_t)raw);
+        write((uint8_t)(raw >> 8));
+    }
+
     /**
      * Includes one byte in the CRC calculation.
      * @param x The raw data byte, before stuffing.
      */
-    void update_crc(uint8_t x);
-
-    std::ostream& stream;
-    uint8_t crc;
+    void update_crc(uint8_t raw) {
+        uint16_t temp = crc + raw;
+        // Cycle
+        temp += temp >> 8;
+        // Discard upper byte
+        crc = temp;
+    }
 };
 
 }
