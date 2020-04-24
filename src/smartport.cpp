@@ -3,11 +3,40 @@
 
 namespace smartport {
 
+void SmartPort::write_packet(uint8_t frame_header, uint16_t data_id, uint32_t data) {
+    // TODO assuming little endian byte order
+    uint8_t packet[7] = {
+        frame_header,
+        data_id,
+        data_id >> 8,
+        data,
+        data >> 8,
+        data >> 16,
+        data >> 24
+    };
+    write_packet(packet, sizeof(packet));
+}
+
+void SmartPort::write_packet(uint8_t[] packet, int size) {
+    stream.write(packet, size);
+
+    // Calculate CRC
+    uint16_t crc = 0;
+    for (int i = 0; i < size; i++) {
+        crc += packet[i];
+        crc += crc >> 8;
+        crc &= 0xff;
+    }
+    stream.put(~crc);
+}
+
+
+
 void SmartPort::SendData(uint16_t type, uint8_t data[4]) {
     crc = 0;
     SendU8(DATA_FRAME_HEADER);
     SendU16(type);
-    
+
     for (int i = 0; i < 4; i++) {
         SendU8(data[i]);
     }
@@ -17,7 +46,7 @@ void SmartPort::SendData(uint16_t type, uint8_t data[4]) {
 /**
  * @brief Sends a single byte to the underlying stream.
  * Protocol reserved bytes are "byte-stuffed."
- * 
+ *
  * @param byte The raw data byte.
  */
 void SmartPort::SendU8(uint8_t byte) {
