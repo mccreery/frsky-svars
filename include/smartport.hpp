@@ -48,6 +48,17 @@ enum DataID {
 // TODO: in 32 bits, stuff as much data into the packet as possible
 // TODO: repair multiple packets into one long packet at the end
 
+class FixedPoint {
+public:
+    FixedPoint(int32_t signed_) : mantissa(
+        (uint32_t)(signed_ & 0x07ff) << 8 | signed_ & 0x8000
+    ) {}
+    FixedPoint(uint32_t unsigned_) : mantissa(unsigned_ << 8) {}
+    FixedPoint(float float_) : FixedPoint((int32_t)(float_ * 256)) {}
+private:
+    int32_t mantissa;
+};
+
 class SmartPort {
 public:
     SmartPort(std::ostream& stream);
