@@ -3,7 +3,34 @@
 
 namespace smartport {
 
-void SmartPort::write_packet(uint8_t frame_header, uint16_t data_id, uint32_t data) {
+void SmartPort::passthrough(int channel, int32_t data) {
+    write_packet(FrameHeader::sensor, DataID::var_int | channel & 0x0fff, data);
+}
+
+void SmartPort::passthrough(int channel, FixedPoint data) {
+    write_packet(FrameHeader::sensor, DataID::var_fixed | channel & 0x0fff, data.encode());
+}
+
+void SmartPort::passthrough(int channel, float data) {
+    write_packet(FrameHeader::sensor, DataID::var_float | channel & 0x0fff, reinterpret_cast<float>(data));
+}
+
+void SmartPort::passthrough(int channel, std::string data) {
+    // Round up length to multiple of 3
+    int num_packets = (data.length() + 2) / 3;
+
+    for (int i = 0; num_packets > 0; i += 3) {
+        --num_packets;
+
+        write_packet(FrameHeader::sensor, DataID::var_string | channel & 0x0fff,
+            num_packets << 24
+            | data[i] << 16
+            | data[i + 1] << 8
+            | data[i + 2]);
+    }
+}
+
+void SmartPort::write_packet(FrameHeader frame_header, DataID data_id, uint32_t data) {
     // TODO assuming little endian byte order
     uint8_t packet[7] = {
         frame_header,

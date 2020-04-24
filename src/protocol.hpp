@@ -37,8 +37,8 @@ enum DataID {
     var_signature = 0x5100,
 
     // Data types
-    var_int = 0,
-    var_fixed = 1u << 12,
+    var_int = var_signature,
+    var_fixed = var_signature | 1u << 12,
     var_float,
     var_varint,
     var_string
