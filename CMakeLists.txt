@@ -5,15 +5,16 @@ include(GNUInstallDirs)
 project(sport VERSION 0.1 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+add_compile_options(-Wall -Wextra -pedantic -Werror)
 
 add_library(sport SHARED
-    src/sport.cpp)
+    src/smartport.cpp)
 
 target_include_directories(sport PRIVATE src)
 target_include_directories(sport PUBLIC include)
 
 set_target_properties(sport PROPERTIES PUBLIC_HEADER
-    include/sport.hpp)
+    include/smartport.hpp)
 
 set_target_properties(sport PROPERTIES VERSION ${PROJECT_VERSION})
 #set_target_properties(sport PROPERTIES SOVERSION 1) # full release only
