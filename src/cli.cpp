@@ -7,8 +7,8 @@ int main(int argc, char** argv) {
 
     smartport::SmartPort port(std::cout);
     // 31 bit positive number, 32 bit negative number
-    port.passthrough(0, 1234567890);
-    port.passthrough(1, -1234567890);
+    port.passthrough(0, (signed)0x76543210);
+    port.passthrough(1, (signed)0x87654321);
 
     port.passthrough(2, smartport::FixedPoint(-24.2625f));
     port.passthrough(3, smartport::FixedPoint(-32));
