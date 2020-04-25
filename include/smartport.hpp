@@ -33,7 +33,7 @@ public:
     void passthrough(int channel, std::string data);
 private:
     void write_packet(FrameHeader frame_header, DataID data_id, uint32_t data);
-    void write_packet(uint8_t packet[], int size);
+    void write_packet(const char* packet, int size);
     std::ostream& stream;
 };
 

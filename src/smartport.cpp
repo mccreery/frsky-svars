@@ -36,19 +36,19 @@ void SmartPort::passthrough(int channel, std::string data) {
 
 void SmartPort::write_packet(FrameHeader frame_header, DataID data_id, uint32_t data) {
     // TODO assuming little endian byte order
-    uint8_t packet[7] = {
+    const char packet[7] = {
         frame_header,
-        (uint8_t)data_id,
-        (uint8_t)(data_id >> 8),
-        (uint8_t)data,
-        (uint8_t)(data >> 8),
-        (uint8_t)(data >> 16),
-        (uint8_t)(data >> 24)
+        (char)data_id,
+        (char)(data_id >> 8),
+        (char)data,
+        (char)(data >> 8),
+        (char)(data >> 16),
+        (char)(data >> 24)
     };
     write_packet(packet, sizeof(packet));
 }
 
-void SmartPort::write_packet(uint8_t packet[], int size) {
+void SmartPort::write_packet(const char* packet, int size) {
     stream.write(packet, size);
 
     // Calculate CRC
