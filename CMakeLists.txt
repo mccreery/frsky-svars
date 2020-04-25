@@ -10,6 +10,10 @@ add_compile_options(-Wall -Wextra -pedantic -Werror)
 add_library(sport SHARED
     src/smartport.cpp)
 
+add_executable(sport-cli
+    src/cli.cpp)
+target_link_libraries(sport-cli sport)
+
 target_include_directories(sport PRIVATE src)
 target_include_directories(sport PUBLIC include)
 
