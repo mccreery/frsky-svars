@@ -3,7 +3,7 @@
 
 namespace smartport {
 
-enum FrameHeader {
+enum FrameHeader : uint8_t {
     /**
      * Indicates a sensor packet. Packets with corresponding data IDs between
      * 0x5000 and 0x52ff are considered passthrough packets. Low IDs are
@@ -23,7 +23,7 @@ enum FrameHeader {
  * Data IDs defined here:
  * https://cdn.rawgit.com/ArduPilot/ardupilot_wiki/33cd0c2c/images/FrSky_Passthrough_protocol.xlsx
  */
-enum DataID {
+enum DataID : uint16_t {
     text = 0x5000,
     ap_status = 0x5001,
     gps_status = 0x5002,

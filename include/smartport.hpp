@@ -7,6 +7,9 @@ namespace smartport {
 // TODO: in 32 bits, stuff as much data into the packet as possible
 // TODO: repair multiple packets into one long packet at the end
 
+enum FrameHeader : uint8_t;
+enum DataID : uint16_t;
+
 class FixedPoint {
 public:
     FixedPoint(int32_t signed_) : mantissa(
