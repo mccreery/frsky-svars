@@ -18,5 +18,5 @@ int main(int argc, char** argv) {
     port.passthrough(5, -3.25e-10f);
 
     // String containing UTF-8 Unicode
-    port.passthrough(0, "Hello, world! 你好，世界！");
+    port.passthrough(0, "Hello, world!");
 }

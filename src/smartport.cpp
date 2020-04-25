@@ -3,6 +3,25 @@
 
 namespace smartport {
 
+template <typename UInt>
+static void put_big_endian(char* const buf, const UInt x) {
+    for (size_t i = 0; i < sizeof(UInt); i++) {
+        unsigned shift = (sizeof(UInt) - 1 - i) * 8;
+        buf[i] = (char)(x >> shift);
+    }
+}
+
+template <typename UInt>
+static UInt get_big_endian(const char* const buf, unsigned size = sizeof(UInt)) {
+    UInt x = 0;
+
+    for (size_t i = 0; i < size; i++) {
+        unsigned shift = (sizeof(UInt) - 1 - i) * 8;
+        x |= buf[i] << shift;
+    }
+    return x;
+}
+
 static DataID data_id(DataID var_type, int channel) {
     return (DataID)(var_type | (channel & 0x0fff));
 }
@@ -20,31 +39,26 @@ void SmartPort::passthrough(int channel, float data) {
 }
 
 void SmartPort::passthrough(int channel, std::string data) {
-    // Round up length to multiple of 3
-    unsigned num_packets = (data.length() + 2) / 3;
+    // Write string in chunks of 4 bytes
+    for (unsigned i = 0; i < data.length(); i += 4) {
+        unsigned chunk_size;
+        if (i + 3 < data.length()) {
+            chunk_size = 4;
+        } else {
+            chunk_size = data.length() - i;
+        }
 
-    for (int i = 0; num_packets > 0; i += 3) {
-        --num_packets;
-
-        write_packet(FrameHeader::sensor, data_id(DataID::var_string, channel),
-            num_packets << 24
-            | data[i] << 16
-            | data[i + 1] << 8
-            | data[i + 2]);
+        uint32_t chunk = get_big_endian<uint32_t>(&data.c_str()[i], chunk_size);
+        write_packet(FrameHeader::sensor, data_id(DataID::var_string, channel), chunk);
     }
 }
 
 void SmartPort::write_packet(FrameHeader frame_header, DataID data_id, uint32_t data) {
-    // TODO assuming little endian byte order
-    const char packet[7] = {
-        frame_header,
-        (char)data_id,
-        (char)(data_id >> 8),
-        (char)data,
-        (char)(data >> 8),
-        (char)(data >> 16),
-        (char)(data >> 24)
-    };
+    char packet[7];
+    packet[0] = frame_header;
+    put_big_endian(&packet[1], data_id);
+    put_big_endian(&packet[3], data);
+
     write_packet(packet, sizeof(packet));
 }
 
