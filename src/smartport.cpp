@@ -38,12 +38,12 @@ void SmartPort::write_packet(FrameHeader frame_header, DataID data_id, uint32_t 
     // TODO assuming little endian byte order
     uint8_t packet[7] = {
         frame_header,
-        data_id,
-        data_id >> 8,
-        data,
-        data >> 8,
-        data >> 16,
-        data >> 24
+        (uint8_t)data_id,
+        (uint8_t)(data_id >> 8),
+        (uint8_t)data,
+        (uint8_t)(data >> 8),
+        (uint8_t)(data >> 16),
+        (uint8_t)(data >> 24)
     };
     write_packet(packet, sizeof(packet));
 }
