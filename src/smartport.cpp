@@ -23,7 +23,7 @@ static UInt get_big_endian(const char* const buf, unsigned size = sizeof(UInt)) 
 }
 
 static DataID data_id(DataID var_type, int channel) {
-    return (DataID)(var_type | (channel & 0x0fff));
+    return (DataID)(var_type | (channel & 0x3f));
 }
 
 void SmartPort::passthrough(int channel, int32_t data) {

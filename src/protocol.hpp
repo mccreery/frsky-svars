@@ -38,10 +38,9 @@ enum DataID : uint16_t {
 
     // Data types
     var_int = var_signature,
-    var_fixed = var_signature | 1u << 12,
-    var_float,
-    var_varint,
-    var_string
+    var_fixed = var_signature | 1u << 6,
+    var_float = var_signature | 2u << 6,
+    var_string = var_signature | 3u << 6
 };
 
 }
