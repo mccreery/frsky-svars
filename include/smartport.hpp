@@ -10,7 +10,7 @@ namespace smartport {
 class FixedPoint {
 public:
     FixedPoint(int32_t signed_) : mantissa(
-        (uint32_t)(signed_ & 0x07ff) << 8 | signed_ & 0x8000
+        (uint32_t)(signed_ & 0x07ff) << 8 | (signed_ & 0x8000)
     ) {}
     FixedPoint(uint32_t unsigned_) : mantissa(unsigned_ << 8) {}
     FixedPoint(float float_) : FixedPoint((int32_t)(float_ * 256)) {}
@@ -29,8 +29,8 @@ public:
     void passthrough(int channel, float data);
     void passthrough(int channel, std::string data);
 private:
-    void write_packet(uint8_t frame_header, uint16_t data_id, uint32_t data);
-    void write_packet(uint8_t[] packet);
+    void write_packet(FrameHeader frame_header, DataID data_id, uint32_t data);
+    void write_packet(uint8_t packet[], int size);
     std::ostream& stream;
 };
 
