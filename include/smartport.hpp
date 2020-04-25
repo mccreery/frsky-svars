@@ -25,7 +25,7 @@ private:
 
 class SmartPort {
 public:
-    SmartPort(std::ostream& stream);
+    SmartPort(std::ostream& stream) : stream(stream) {}
 
     void passthrough(int channel, int32_t data);
     void passthrough(int channel, FixedPoint data);
