@@ -18,7 +18,7 @@ target_include_directories(sport PRIVATE src)
 target_include_directories(sport PUBLIC include)
 
 set_target_properties(sport PROPERTIES PUBLIC_HEADER
-    include/smartport.hpp)
+    include/frsky/sport.hpp)
 
 set_target_properties(sport PROPERTIES VERSION ${PROJECT_VERSION})
 #set_target_properties(sport PROPERTIES SOVERSION 1) # full release only
