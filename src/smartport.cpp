@@ -1,26 +1,8 @@
 #include <smartport.hpp>
 #include "protocol.hpp"
+#include "endian.hpp"
 
 namespace smartport {
-
-template <typename UInt>
-static void put_big_endian(char* const buf, const UInt x) {
-    for (size_t i = 0; i < sizeof(UInt); i++) {
-        unsigned shift = (sizeof(UInt) - 1 - i) * 8;
-        buf[i] = (char)(x >> shift);
-    }
-}
-
-template <typename UInt>
-static UInt get_big_endian(const char* const buf, unsigned size = sizeof(UInt)) {
-    UInt x = 0;
-
-    for (size_t i = 0; i < size; i++) {
-        unsigned shift = (sizeof(UInt) - 1 - i) * 8;
-        x |= buf[i] << shift;
-    }
-    return x;
-}
 
 static DataID data_id(DataID var_type, int channel) {
     return (DataID)(var_type | (channel & 0x3f));
