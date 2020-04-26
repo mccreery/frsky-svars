@@ -4,12 +4,31 @@
 #include <sstream>
 #include <map>
 
+#include <csignal>
+#include <csetjmp>
+
 using namespace frsky;
 typedef void (* TypeHandler)(std::ostream&, int, std::string&);
 
 class SyntaxError : public std::runtime_error {
     using std::runtime_error::runtime_error;
 };
+
+static std::jmp_buf env;
+static void handle_exit_signal(int signal) {
+    // Terminate normally
+    (void)signal;
+    std::longjmp(env, 0);
+}
+
+static void register_signal_handler() {
+    struct sigaction action;
+    action.sa_handler = handle_exit_signal;
+    action.sa_flags = 0;
+    sigemptyset(&action.sa_mask);
+    sigaction(SIGINT, &action, NULL);
+    sigaction(SIGTERM, &action, NULL);
+}
 
 static void handle_int(std::ostream& stream, int channel, std::string& value) {
     int32_t int_value;
@@ -92,6 +111,7 @@ static void process_line(std::ostream& stream, std::string& line) {
 }
 
 int main(int argc, char** argv) {
+    register_signal_handler();
     std::cout << "S.Port CLI v" << PROJECT_VERSION << std::endl;
 
     if (argc != 2) {
@@ -107,12 +127,13 @@ int main(int argc, char** argv) {
         return 1;
     }
 
-    while (true) {
+    // when longjmp is called, setjmp returns 1
+    while (!setjmp(env)) {
         std::cout << "> ";
 
         std::string line;
         std::getline(std::cin, line);
-        if (line == "q") break;
+        if (line == "q") return 0;
 
         try {
             process_line(serial, line);
@@ -121,4 +142,6 @@ int main(int argc, char** argv) {
             std::cerr << "Command format: [CHANNEL (0-63)] [TYPE (int, fixed, float, string)] [VALUE]" << std::endl;
         }
     }
+    // Extra newline when terminating unusually
+    std::cout << std::endl;
 }
