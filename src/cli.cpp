@@ -81,7 +81,8 @@ static void process_line(std::ostream& stream, std::string& line) {
         throw SyntaxError("Expected type (int, fixed, float, string)");
     }
 
-    buf >> value;
+    buf >> std::ws;
+    std::getline(buf, value);
     if (!buf) {
         throw SyntaxError("Expected value");
     }
