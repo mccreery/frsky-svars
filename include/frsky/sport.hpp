@@ -2,7 +2,7 @@
 #include <cstdint>
 #include <iostream>
 
-namespace smartport {
+namespace frsky::sport {
 
 // TODO: in 32 bits, stuff as much data into the packet as possible
 // TODO: repair multiple packets into one long packet at the end

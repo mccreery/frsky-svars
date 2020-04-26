@@ -1,7 +1,7 @@
 #pragma once
 #include <cstdint>
 
-namespace smartport {
+namespace frsky::sport {
 
 enum FrameHeader : uint8_t {
     /**

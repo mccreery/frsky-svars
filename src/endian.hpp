@@ -1,6 +1,6 @@
 #pragma once
 
-namespace smartport {
+namespace frsky::sport {
 
 /**
  * @brief Copies an unsigned integer to a buffer using big-endian (MSB first).

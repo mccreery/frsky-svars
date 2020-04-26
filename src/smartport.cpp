@@ -1,8 +1,8 @@
-#include <smartport.hpp>
+#include <frsky/sport.hpp>
 #include "protocol.hpp"
 #include "endian.hpp"
 
-namespace smartport {
+namespace frsky::sport {
 
 static DataID data_id(DataID var_type, int channel) {
     return (DataID)(var_type | (channel & 0x3f));
