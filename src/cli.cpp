@@ -1,53 +1,67 @@
 #include <frsky/sport.hpp>
 #include <iostream>
+#include <fstream>
+#include <sstream>
+#include <map>
 
 using namespace frsky;
+typedef void (* TypeHandler)(std::ostream&, int, std::string&);
 
-template <typename It>
-static It check_equals(It begin, It end) {
-    bool seen = false;
-    It i;
+class SyntaxError : public std::runtime_error {
+    using std::runtime_error::runtime_error;
+};
 
-    for (i = begin; i != end; i++) {
-        if (*i == '=') {
-            if (seen) {
-                throw "Too many equals signs";
-            } else {
-                seen = true;
-            }
-        } else if (*i != ' ') {
-            break;
-        }
+static void handle_int(std::ostream& stream, int channel, std::string& value) {
+    int32_t int_value;
+    try {
+        int_value = std::stoi(value);
+    } catch (std::invalid_argument& err) {
+        throw SyntaxError("Invalid value of type int");
     }
 
-    if (!seen) {
-        throw "No equals sign";
-    }
-    return i;
+    sport::putvar(stream, channel, int_value);
 }
 
-static bool process_line(std::string& line) {
-    if (line == "q") { return false; }
+static std::map<std::string, TypeHandler> type_handlers {
+    { "int", handle_int }
+};
+
+static void process_line(std::ostream& stream, std::string& line) {
+    std::istringstream buf;
+    buf.str(line);
+    buf >> std::skipws;
 
     int channel;
-    size_t channel_length;
-    try {
-        channel = std::stoi(line, &channel_length);
-    } catch (std::invalid_argument err) {
-        throw "Invalid channel number";
+    TypeHandler type_handler = nullptr;
+    std::string value;
+
+    buf >> channel;
+    if (!buf || channel < 0 || channel >= 64) {
+        throw SyntaxError("Expected channel (0-63)");
     }
 
-    auto i = line.cbegin() + channel_length;
-    i = check_equals(i, line.cend());
+    std::string type;
+    buf >> type;
+    if (buf) {
+        auto i = type_handlers.find(type);
+        if (i != type_handlers.end()) {
+            type_handler = (*i).second;
+        }
+    }
+    if (type_handler == nullptr) {
+        throw SyntaxError("Expected type (int, fixed, float, string)");
+    }
 
-    // TODO For testing
-    std::cout << line.substr(i - line.cbegin()) << " on " << channel << std::endl;
+    buf >> value;
+    if (!buf) {
+        throw SyntaxError("Expected value");
+    }
 
-    return true;
+    type_handler(stream, channel, value);
+    std::cout << "Packet sent" << std::endl;
 }
 
 int main(int argc, char** argv) {
-    (void)argv;
     std::cout << "S.Port CLI v" << PROJECT_VERSION << std::endl;
 
     if (argc != 2) {
@@ -55,32 +69,26 @@ int main(int argc, char** argv) {
         return 1;
     }
 
-    std::string line;
-    bool next = true;
+    // TODO temporary file instead of serial port
+    std::ofstream serial(argv[1], std::ios::out | std::ios::binary);
 
-    do {
+    if (!serial.is_open() || serial.fail() || serial.bad()) {
+        std::cerr << "Could not open output stream" << std::endl;
+        return 1;
+    }
+
+    while (true) {
         std::cout << "> ";
+
+        std::string line;
         std::getline(std::cin, line);
+        if (line == "q") break;
 
         try {
-            next = process_line(line);
-        } catch (const char* const err) {
-            std::cerr << err << std::endl;
+            process_line(serial, line);
+        } catch(SyntaxError& err) {
+            std::cerr << err.what() << std::endl;
+            std::cerr << "Command format: [CHANNEL (0-63)] [TYPE (int, fixed, float, string)] [VALUE]" << std::endl;
         }
-    } while (next);
-
-    /*// 31 bit positive number, 32 bit negative number
-    sport::putvar(std::cout, 0, (signed)0x76543210);
-    sport::putvar(std::cout, 1, (signed)0x87654321);
-
-    // Fixed point values
-    sport::putvar(std::cout, 3, sport::FixedPoint(32));
-    sport::putvar(std::cout, 2, sport::FixedPoint(-24.2625f));
-
-    // Extreme float values
-    sport::putvar(std::cout, 4, 1.5e10f);
-    sport::putvar(std::cout, 5, -3.25e-10f);
-
-    // String containing UTF-8 Unicode
-    sport::putvar(std::cout, 6, "Hello, world!");*/
+    }
 }
