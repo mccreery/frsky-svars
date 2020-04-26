@@ -22,8 +22,37 @@ static void handle_int(std::ostream& stream, int channel, std::string& value) {
     sport::putvar(stream, channel, int_value);
 }
 
+static void handle_fixed(std::ostream& stream, int channel, std::string& value) {
+    float float_value;
+    try {
+        float_value = std::stof(value);
+    } catch (std::invalid_argument& err) {
+        throw SyntaxError("Invalid value of type fixed");
+    }
+
+    sport::putvar(stream, channel, sport::FixedPoint(float_value));
+}
+
+static void handle_float(std::ostream& stream, int channel, std::string& value) {
+    float float_value;
+    try {
+        float_value = std::stof(value);
+    } catch (std::invalid_argument& err) {
+        throw SyntaxError("Invalid value of type float");
+    }
+
+    sport::putvar(stream, channel, float_value);
+}
+
+static void handle_string(std::ostream& stream, int channel, std::string& value) {
+    sport::putvar(stream, channel, value);
+}
+
 static std::map<std::string, TypeHandler> type_handlers {
-    { "int", handle_int }
+    { "int", handle_int },
+    { "fixed", handle_fixed },
+    { "float", handle_float },
+    { "string", handle_string }
 };
 
 static void process_line(std::ostream& stream, std::string& line) {
