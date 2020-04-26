@@ -3,6 +3,13 @@
 
 namespace frsky::sport {
 
+enum PhysicalID : uint8_t {
+    vario
+    // Other physical IDs omitted as not relevant, we assume 0 is fine
+    // vario value 0 sourced from:
+    // https://github.com/opentx/opentx/blob/2.3/radio/src/telemetry/frsky.h#L211
+};
+
 enum FrameHeader : uint8_t {
     /**
      * Indicates a sensor packet. Packets with corresponding data IDs between
@@ -24,6 +31,7 @@ enum FrameHeader : uint8_t {
  * https://cdn.rawgit.com/ArduPilot/ardupilot_wiki/33cd0c2c/images/FrSky_Passthrough_protocol.xlsx
  */
 enum DataID : uint16_t {
+    // Unused for now
     text = 0x5000,
     ap_status = 0x5001,
     gps_status = 0x5002,
@@ -34,13 +42,35 @@ enum DataID : uint16_t {
     params = 0x5007,
 
     // Application-defined IDs from here
-    var_signature = 0x5100,
-
-    // Data types
-    var_int = var_signature,
-    var_fixed = var_signature | 1u << 6,
-    var_float = var_signature | 2u << 6,
-    var_string = var_signature | 3u << 6
+    var_signature = 0x5100
 };
+
+enum VarType {
+    integer,
+    fixed_point,
+    floating_point,
+    string
+};
+
+static DataID get_data_id(int channel, VarType var_type) {
+    return (DataID)(DataID::var_signature
+        | (var_type << 6)
+        | (channel & 0x3f));
+}
+
+static uint8_t get_crc(const char* packet, int size) {
+    uint16_t crc = 0;
+
+    for (int i = 0; i < size; i++) {
+        crc += packet[i];
+        crc += crc >> 8;
+        crc &= 0xff;
+    }
+    return (uint8_t)~crc;
+}
+
+static void write_var_packet(std::ostream& stream, int channel, VarType var_type, uint32_t value);
+static void write_packet(std::ostream& stream, PhysicalID physical_id, FrameHeader frame_header, DataID data_id, uint32_t value);
+static void write_packet(std::ostream& stream, const char* packet, int size);
 
 }

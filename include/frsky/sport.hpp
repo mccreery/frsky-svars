@@ -1,14 +1,9 @@
 #pragma once
 #include <cstdint>
 #include <iostream>
+#include <string>
 
 namespace frsky::sport {
-
-// TODO: in 32 bits, stuff as much data into the packet as possible
-// TODO: repair multiple packets into one long packet at the end
-
-enum FrameHeader : uint8_t;
-enum DataID : uint16_t;
 
 class FixedPoint {
 public:
@@ -23,18 +18,9 @@ private:
     int32_t mantissa;
 };
 
-class SmartPort {
-public:
-    SmartPort(std::ostream& stream) : stream(stream) {}
-
-    void passthrough(int channel, int32_t data);
-    void passthrough(int channel, FixedPoint data);
-    void passthrough(int channel, float data);
-    void passthrough(int channel, std::string data);
-private:
-    void write_packet(FrameHeader frame_header, DataID data_id, uint32_t data);
-    void write_packet(const char* packet, int size);
-    std::ostream& stream;
-};
+void putvar(std::ostream& stream, int channel, int32_t value);
+void putvar(std::ostream& stream, int channel, FixedPoint value);
+void putvar(std::ostream& stream, int channel, float value);
+void putvar(std::ostream& stream, int channel, std::string value);
 
 }
