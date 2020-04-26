@@ -30,4 +30,5 @@ install(TARGETS sport_static ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
 # CLI
 add_executable(sport_cli src/cli.cpp)
 target_link_libraries(sport_cli sport_static)
+target_link_libraries(sport_cli readline)
 set_target_properties(sport_cli PROPERTIES VERSION ${PROJECT_VERSION})

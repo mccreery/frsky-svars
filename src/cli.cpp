@@ -3,6 +3,7 @@
 #include <fstream>
 #include <sstream>
 #include <map>
+#include <readline/readline.h>
 
 #include <csignal>
 #include <csetjmp>
@@ -129,10 +130,7 @@ int main(int argc, char** argv) {
 
     // when longjmp is called, setjmp returns 1
     while (!setjmp(env)) {
-        std::cout << "> ";
-
-        std::string line;
-        std::getline(std::cin, line);
+        std::string line(readline("> "));
         if (line == "q") return 0;
 
         try {
