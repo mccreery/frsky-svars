@@ -4,7 +4,46 @@ telemetry using C++ streams. Most existing libraries are written for Arduino
 boards such as the Teensy or Uno. This library builds to a standard relocatable
 (.so) library on Linux systems.
 
-**This information is a work in progress.**
+## Build
+
+### Requirements
+- ROS (for Catkin which is used by the serial library)
+- CMake
+
+```bash
+# Source ROS environment
+. /opt/ros/melodic/setup.sh
+
+# Generate libsport.so and sport-cli
+mkdir -p build
+cd build
+cmake ..
+make
+# Install libsport.so and libserial.so
+make install
+```
+
+## Library
+
+See header [`<frsky/sport.hpp>`](include/frsky/sport.hpp) for the public API.
+- `configure_serial` configures an unopened serial object for S.Port
+- `putvar` sends one or more telemetry packets over the given serial port, which
+  are compatible with the Lua scripts in [the root
+  project](https://github.com/mccreery/comp3200-project)
+
+## CLI
+There is a basic command-line interface `sport_cli`:
+
+```shell
+$ sudo ./sport_cli /dev/ttyS0
+S.Port CLI v0.1
+>
+Expected channel (0-63)
+Command format: [CHANNEL (0-63)] [TYPE (int, fixed, float, string)] [VALUE]
+>
+```
+
+**The following information is a work in progress.**
 
 ## Terminology
 Term        | Meaning
@@ -58,22 +97,3 @@ is proprietary property of FrSky.
 - [PX4
   source](https://github.com/PX4/Firmware/blob/master/src/drivers/telemetry/frsky_telemetry/frsky_telemetry.cpp)
   explaining serial port parity, stop bits etc.
-
-## Build
-
-### Requirements
-- ROS (for Catkin)
-- CMake
-
-```bash
-# Source ROS environment
-. /opt/ros/melodic/setup.sh
-
-# Generate libsport.so and sport-cli
-mkdir -p build
-cd build
-cmake ..
-make
-# Install libsport.so
-make install
-```
