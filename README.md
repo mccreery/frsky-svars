@@ -26,9 +26,10 @@ make install
 ## Library
 
 See header [`<frsky/sport.hpp>`](include/frsky/sport.hpp) for the public API.
-- `configure_serial` configures an unopened serial object for S.Port
-- `putvar` sends one or more telemetry packets over the given serial port, which
-  are compatible with the Lua scripts in [the root
+- `sport::FixedPoint` allows sending fixed point numbers over the S.Port
+- `sport::configure_serial` configures an unopened serial object for S.Port
+- `sport::putvar` sends one or more telemetry packets over the given serial
+  port, which are compatible with the Lua scripts in [the root
   project](https://github.com/mccreery/comp3200-project)
 
 ## CLI
