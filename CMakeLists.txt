@@ -9,23 +9,13 @@ add_compile_options(-Wall -Wextra -pedantic -Werror)
 include_directories(include)
 add_definitions(-DPROJECT_VERSION="${PROJECT_VERSION}")
 
-add_library(sport_obj OBJECT src/smartport.cpp)
-set_property(TARGET sport_obj PROPERTY POSITION_INDEPENDENT_CODE 1)
-
 # Shared library
-add_library(sport SHARED $<TARGET_OBJECTS:sport_obj>)
+add_library(sport SHARED src/smartport.cpp)
 set_target_properties(sport PROPERTIES VERSION ${PROJECT_VERSION})
 #set_target_properties(sport PROPERTIES SOVERSION 1) # full release only
 
 install(TARGETS sport LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 install(FILES include/frsky/sport.hpp DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/frsky)
-
-# Static library
-add_library(sport_static STATIC $<TARGET_OBJECTS:sport_obj>)
-set_target_properties(sport_static PROPERTIES VERSION ${PROJECT_VERSION})
-#set_target_properties(sport_static PROPERTIES SOVERSION 1) # full release only
-
-install(TARGETS sport_static ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
 # CLI
 add_executable(sport_cli src/cli.cpp)
