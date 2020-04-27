@@ -57,8 +57,16 @@ is proprietary property of FrSky.
   gives hints of packet structure
 
 ## Build
+
+### Requirements
+- ROS (for Catkin)
+- CMake
+
 ```bash
-# Generate targets libsport.so and sport-cli
+# Source ROS environment
+. /opt/ros/melodic/setup.sh
+
+# Generate libsport.so and sport-cli
 mkdir -p build
 cd build
 cmake ..

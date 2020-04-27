@@ -1,5 +1,7 @@
 # https://stackoverflow.com/questions/17511496/how-to-create-a-shared-library-with-cmake
 cmake_minimum_required(VERSION 3.0)
+add_subdirectory(serial)
+
 include(GNUInstallDirs)
 
 project(sport VERSION 0.1 LANGUAGES CXX)
@@ -11,6 +13,7 @@ add_definitions(-DPROJECT_VERSION="${PROJECT_VERSION}")
 
 # Shared library
 add_library(sport SHARED src/smartport.cpp)
+target_link_libraries(sport serial)
 set_target_properties(sport PROPERTIES VERSION ${PROJECT_VERSION})
 #set_target_properties(sport PROPERTIES SOVERSION 1) # full release only
 
@@ -19,6 +22,6 @@ install(FILES include/frsky/sport.hpp DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/fr
 
 # CLI
 add_executable(sport_cli src/cli.cpp)
-target_link_libraries(sport_cli sport_static)
+target_link_libraries(sport_cli sport)
 target_link_libraries(sport_cli readline)
 set_target_properties(sport_cli PROPERTIES VERSION ${PROJECT_VERSION})
