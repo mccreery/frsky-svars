@@ -1,7 +1,7 @@
 #pragma once
 #include <cstdint>
-#include <iostream>
 #include <string>
+#include <serial/serial.h>
 
 namespace frsky::sport {
 
@@ -18,9 +18,11 @@ private:
     int32_t mantissa;
 };
 
-void putvar(std::ostream& stream, int channel, int32_t value);
-void putvar(std::ostream& stream, int channel, FixedPoint value);
-void putvar(std::ostream& stream, int channel, float value);
-void putvar(std::ostream& stream, int channel, std::string value);
+void putvar(serial::Serial& serial, int channel, int32_t value);
+void putvar(serial::Serial& serial, int channel, FixedPoint value);
+void putvar(serial::Serial& serial, int channel, float value);
+void putvar(serial::Serial& serial, int channel, std::string value);
+
+void configure_serial(serial::Serial& serial);
 
 }

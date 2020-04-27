@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstdint>
+
 namespace frsky::sport {
 
 /**
@@ -9,10 +11,10 @@ namespace frsky::sport {
  * @param x The value to write.
  */
 template <typename UInt>
-static void put_big_endian(char* const buf, const UInt x) {
+static void put_big_endian(uint8_t* const buf, const UInt x) {
     for (size_t i = 0; i < sizeof(UInt); i++) {
         unsigned shift = (sizeof(UInt) - 1 - i) * 8;
-        buf[i] = (char)(x >> shift);
+        buf[i] = (uint8_t)(x >> shift);
     }
 }
 
@@ -24,7 +26,7 @@ static void put_big_endian(char* const buf, const UInt x) {
  * @return UInt The value read from the buffer.
  */
 template <typename UInt>
-static UInt get_big_endian(const char* const buf, unsigned size = sizeof(UInt)) {
+static UInt get_big_endian(const uint8_t* const buf, unsigned size = sizeof(UInt)) {
     UInt x = 0;
 
     for (size_t i = 0; i < size; i++) {

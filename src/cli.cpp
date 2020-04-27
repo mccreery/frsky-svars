@@ -4,12 +4,13 @@
 #include <sstream>
 #include <map>
 #include <readline/readline.h>
+#include <serial/serial.h>
 
 #include <csignal>
 #include <csetjmp>
 
 using namespace frsky;
-typedef void (* TypeHandler)(std::ostream&, int, std::string&);
+typedef void (* TypeHandler)(serial::Serial&, int, std::string&);
 
 class SyntaxError : public std::runtime_error {
     using std::runtime_error::runtime_error;
@@ -31,7 +32,7 @@ static void register_signal_handler() {
     sigaction(SIGTERM, &action, NULL);
 }
 
-static void handle_int(std::ostream& stream, int channel, std::string& value) {
+static void handle_int(serial::Serial& stream, int channel, std::string& value) {
     int32_t int_value;
     try {
         int_value = std::stoi(value);
@@ -42,7 +43,7 @@ static void handle_int(std::ostream& stream, int channel, std::string& value) {
     sport::putvar(stream, channel, int_value);
 }
 
-static void handle_fixed(std::ostream& stream, int channel, std::string& value) {
+static void handle_fixed(serial::Serial& stream, int channel, std::string& value) {
     float float_value;
     try {
         float_value = std::stof(value);
@@ -53,7 +54,7 @@ static void handle_fixed(std::ostream& stream, int channel, std::string& value) 
     sport::putvar(stream, channel, sport::FixedPoint(float_value));
 }
 
-static void handle_float(std::ostream& stream, int channel, std::string& value) {
+static void handle_float(serial::Serial& stream, int channel, std::string& value) {
     float float_value;
     try {
         float_value = std::stof(value);
@@ -64,7 +65,7 @@ static void handle_float(std::ostream& stream, int channel, std::string& value) 
     sport::putvar(stream, channel, float_value);
 }
 
-static void handle_string(std::ostream& stream, int channel, std::string& value) {
+static void handle_string(serial::Serial& stream, int channel, std::string& value) {
     sport::putvar(stream, channel, value);
 }
 
@@ -75,7 +76,7 @@ static std::map<std::string, TypeHandler> type_handlers {
     { "string", handle_string }
 };
 
-static void process_line(std::ostream& stream, std::string& line) {
+static void process_line(serial::Serial& stream, std::string& line) {
     std::istringstream buf;
     buf.str(line);
     buf >> std::skipws;
@@ -120,11 +121,14 @@ int main(int argc, char** argv) {
         return 1;
     }
 
-    // TODO temporary file instead of serial port
-    std::ofstream serial(argv[1], std::ios::out | std::ios::binary);
+    serial::Serial serial;
+    sport::configure_serial(serial);
+    serial.setPort(argv[1]);
 
-    if (!serial.is_open() || serial.fail() || serial.bad()) {
-        std::cerr << "Could not open output stream" << std::endl;
+    try {
+        serial.open();
+    } catch (serial::IOException ex) {
+        std::cerr << ex.what() << std::endl;
         return 1;
     }
 

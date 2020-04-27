@@ -55,6 +55,9 @@ is proprietary property of FrSky.
 - [OpenTX Lua
   reference](https://opentx.gitbooks.io/opentx-2-2-lua-reference-guide/content/general/sportTelemetryPop.html)
   gives hints of packet structure
+- [PX4
+  source](https://github.com/PX4/Firmware/blob/master/src/drivers/telemetry/frsky_telemetry/frsky_telemetry.cpp)
+  explaining serial port parity, stop bits etc.
 
 ## Build
 

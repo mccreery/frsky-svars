@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdint>
+#include <vector>
 
 namespace frsky::sport {
 
@@ -58,19 +59,20 @@ static DataID get_data_id(int channel, VarType var_type) {
         | (channel & 0x3f));
 }
 
-static uint8_t get_crc(const char* packet, int size) {
+template <typename It>
+static uint8_t get_crc(It begin, It end) {
     uint16_t crc = 0;
 
-    for (int i = 0; i < size; i++) {
-        crc += packet[i];
+    for (It i = begin; i != end; i++) {
+        crc += *i;
         crc += crc >> 8;
         crc &= 0xff;
     }
     return (uint8_t)~crc;
 }
 
-static void write_var_packet(std::ostream& stream, int channel, VarType var_type, uint32_t value);
-static void write_packet(std::ostream& stream, PhysicalID physical_id, FrameHeader frame_header, DataID data_id, uint32_t value);
-static void write_packet(std::ostream& stream, const char* packet, int size);
+static void write_var_packet(serial::Serial& stream, int channel, VarType var_type, uint32_t value);
+static void write_packet(serial::Serial& stream, PhysicalID physical_id, FrameHeader frame_header, DataID data_id, uint32_t value);
+static void write_packet(serial::Serial& stream, const std::vector<uint8_t>& packet);
 
 }
