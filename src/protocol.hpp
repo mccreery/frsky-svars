@@ -71,8 +71,7 @@ static uint8_t get_crc(It begin, It end) {
     return (uint8_t)~crc;
 }
 
-static void write_var_packet(serial::Serial& stream, int channel, VarType var_type, uint32_t value);
-static void write_packet(serial::Serial& stream, PhysicalID physical_id, FrameHeader frame_header, DataID data_id, uint32_t value);
-static void write_packet(serial::Serial& stream, const std::vector<uint8_t>& packet);
+std::vector<uint8_t> serialize_var_packet(int channel, VarType var_type, uint32_t value);
+std::vector<uint8_t> serialize_packet(PhysicalID physical_id, FrameHeader frame_header, DataID data_id, uint32_t value);
 
 }
