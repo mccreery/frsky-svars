@@ -25,3 +25,11 @@ add_executable(sport_cli src/cli.cpp)
 target_link_libraries(sport_cli sport)
 target_link_libraries(sport_cli readline)
 set_target_properties(sport_cli PROPERTIES VERSION ${PROJECT_VERSION})
+
+enable_testing()
+include(GoogleTest)
+
+add_executable(sport_tests src/tests.cpp)
+target_link_libraries(sport_tests gtest_main)
+target_link_libraries(sport_tests sport)
+gtest_discover_tests(sport_tests)
