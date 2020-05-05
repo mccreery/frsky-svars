@@ -3,7 +3,11 @@
 
 using namespace frsky;
 
-TEST(SVars, FixedPoint)
-{
-  EXPECT_EQ(sport::FixedPoint(10u).encode(), 10 << 8);
+TEST(FixedPoint, Signed) {
+    EXPECT_EQ(sport::FixedPoint(50).encode(), 50 << 8);
+    EXPECT_EQ(sport::FixedPoint(-50).encode(), (signed)0xffffce00);
+}
+
+TEST(FixedPoint, Unsigned) {
+    EXPECT_EQ(sport::FixedPoint(10u).encode(), 10 << 8);
 }

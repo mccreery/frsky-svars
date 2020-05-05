@@ -8,7 +8,7 @@ namespace frsky::sport {
 class FixedPoint {
 public:
     FixedPoint(int32_t signed_) : mantissa(
-        (uint32_t)(signed_ & 0x07ff) << 8 | (signed_ & 0x8000)
+        (uint32_t)(signed_ & 0x007fffff) << 8 | (signed_ & 0x80000000)
     ) {}
     FixedPoint(uint32_t unsigned_) : mantissa(unsigned_ << 8) {}
     FixedPoint(float float_) : FixedPoint((int32_t)(float_ * 256)) {}
