@@ -21,20 +21,15 @@ private:
     int32_t mantissa;
 };
 
+void putvar(serial::Serial& serial, int channel, int32_t value);
+void putvar(serial::Serial& serial, int channel, FixedPoint value);
+void putvar(serial::Serial& serial, int channel, float value);
+void putvar(serial::Serial& serial, int channel, std::string value);
+
 std::vector<uint8_t> serialize(int channel, int32_t value);
 std::vector<uint8_t> serialize(int channel, FixedPoint value);
 std::vector<uint8_t> serialize(int channel, float value);
 std::vector<uint8_t> serialize(int channel, std::string value);
-
-template <typename T>
-void putvar(serial::Serial& serial, int channel, T value) {
-    serial.write(serialize(channel, value));
-}
-
-template void putvar(serial::Serial&, int, int32_t);
-template void putvar(serial::Serial&, int, FixedPoint);
-template void putvar(serial::Serial&, int, float);
-template void putvar(serial::Serial&, int, std::string);
 
 void configure_serial(serial::Serial& serial);
 

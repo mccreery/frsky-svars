@@ -4,6 +4,22 @@
 
 namespace frsky::sport {
 
+void putvar(serial::Serial& serial, int channel, int32_t value) {
+    serial.write(serialize(channel, value));
+}
+
+void putvar(serial::Serial& serial, int channel, FixedPoint value) {
+    serial.write(serialize(channel, value));
+}
+
+void putvar(serial::Serial& serial, int channel, float value) {
+    serial.write(serialize(channel, value));
+}
+
+void putvar(serial::Serial& serial, int channel, std::string value) {
+    serial.write(serialize(channel, value));
+}
+
 std::vector<uint8_t> serialize(int channel, int32_t value) {
     return serialize_var_packet(channel, VarType::integer, value);
 }
