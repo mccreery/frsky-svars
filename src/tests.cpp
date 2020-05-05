@@ -11,3 +11,10 @@ TEST(FixedPoint, Signed) {
 TEST(FixedPoint, Unsigned) {
     EXPECT_EQ(sport::FixedPoint(10u).encode(), 10 << 8);
 }
+
+TEST(FixedPoint, Float) {
+    EXPECT_EQ(sport::FixedPoint(0.0f).encode(), 0);
+    EXPECT_EQ(sport::FixedPoint(31.25f).encode(), (signed)0x00001f40);
+    EXPECT_EQ(sport::FixedPoint(-1.0f).encode(), (signed)0xffffff00);
+    EXPECT_EQ(sport::FixedPoint(-0.5f).encode(), (signed)0xffffff80);
+}
