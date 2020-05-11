@@ -53,12 +53,21 @@ enum VarType {
     string
 };
 
+/**
+ * Encodes signature, channel and type into the 16-bit data ID field
+ */
 static DataID get_data_id(int channel, VarType var_type) {
     return (DataID)(DataID::var_signature
         | (var_type << 6)
         | (channel & 0x3f));
 }
 
+/**
+ * @brief Calculates a CRC (cyclic redundancy check) using the algorithm used by
+ * S.Port
+ * @param begin Iterator of the first byte
+ * @param end Iterator of the last byte
+ */
 template <typename It>
 static uint8_t get_crc(It begin, It end) {
     uint16_t crc = 0;
@@ -71,7 +80,13 @@ static uint8_t get_crc(It begin, It end) {
     return (uint8_t)~crc;
 }
 
+/**
+ * Write an S.Vars packet without sending
+ */
 std::vector<uint8_t> serialize_var_packet(int channel, VarType var_type, uint32_t value);
+/**
+ * Write an S.Port packet without sending
+ */
 std::vector<uint8_t> serialize_packet(PhysicalID physical_id, FrameHeader frame_header, DataID data_id, uint32_t value);
 
 }
