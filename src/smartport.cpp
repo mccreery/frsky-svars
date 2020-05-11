@@ -2,6 +2,9 @@
 #include "protocol.hpp"
 #include "endian.hpp"
 
+static_assert(std::numeric_limits<float>::is_iec559,
+    "Code can only be compiled on platforms which use IEEE 754 floating point");
+
 namespace frsky::sport {
 
 void putvar(serial::Serial& serial, int channel, int32_t value) {
